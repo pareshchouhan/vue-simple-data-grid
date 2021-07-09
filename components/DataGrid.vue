@@ -1,0 +1,220 @@
+<template>
+  <div class="r-data-grid">
+    <table class="r-data-grid-table">
+      <thead>
+        <tr>
+          <th v-if="allowSelection">
+            <v-simple-checkbox @input="toggleSelectAll()" :value="isAllSelected">
+
+            </v-simple-checkbox>
+          </th>
+          <th class="position-relative" v-for="column of columns" :key="column.key" @click.prevent="sortColumn(column)">
+            {{column.name}} <span class="ml-auto" v-if="sorting.key && sorting.key === column.key"><v-icon>{{sorting.order === 'ASC' ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon></span>
+            <div class="r-resize-block"></div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, rowIndex) of items" :key="item.id">
+          <td v-if="allowSelection && selections.length > 0" class="text-center">
+            <v-simple-checkbox v-model="selections[rowIndex]" @input="onSelectionChange($event, item)">
+            </v-simple-checkbox>
+          </td>
+          <td v-for="(column, columnIndex) of columns" :key="column.key" :class="{ 'selected-cell': rowIndex === selectedCell.x && columnIndex === selectedCell.y }" :ref="rowIndex === selectedCell.x && columnIndex === selectedCell.y ? 'selectedCell' : null">
+            <template v-if="typeof item[column.key] === 'number' || typeof item[column.key] === 'string'">
+              {{item[column.key]}}
+            </template>
+            <template v-if="typeof item[column.key] === 'object'">
+              <slot :name="'item.' + column.key" v-bind:item="item" v-bind:column="column">
+              </slot>
+            </template>
+            <template v-if="column.key === 'actions'">
+              <v-btn text depressed fab v-for="action of column.actions" :key="action.icon" @click.stop="onClickAction(item, action)">
+                <v-icon>{{action.icon}}</v-icon>
+              </v-btn>
+            </template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+import { sortFn } from '~/utils/sortingFn';
+export default {
+  props: {
+    columns: [],
+    items: [],
+    colors: {}
+  },
+  data() {
+    return {
+      sorting: {
+        key: null,
+        order: 'ASC'
+      },
+      selections: [],
+      allowSelection: true,
+      isAllSelected: false,
+      selectedCell: {
+        x: 0,
+        y: 0
+      }
+    };
+  },
+  computed: {
+    // processedItems() {
+    //   if (this.sorting.key) {
+    //     updatedItems.sort
+    //   }
+    //   return updatedItems;
+    // }
+  },
+  methods: {
+    sortColumn(column) {
+      if (column.sortable) {
+        console.log('sorting on ', column.key, this.sorting.order)
+        if (this.sorting.order === 'ASC') {
+          this.items = this.items.sort((a, b) => sortFn(a[column.key], b[column.key]));
+          this.sorting.order = 'DESC'
+        } else {
+          this.sorting.order = 'ASC'
+          this.items = this.items.sort((a, b) => sortFn(b[column.key], a[column.key]));
+        }
+        this.sorting.key = column.key; // column key to which sort on. (saving so that it may be used later.)
+      }
+    },
+    toggleSelectAll() {
+      this.selections = this.selections.map(selection => !this.isAllSelected);
+      this.isAllSelected = !this.isAllSelected;
+    },
+    onSelectionChange(event, item) {
+      if (event === false) {
+        this.isAllSelected = false
+      } else {
+        if (!this.selections.some(selection => selection === false)) {
+          this.isAllSelected = true
+        }
+      }
+    },
+    onClickAction(item, action) {
+      if (typeof action.onClick === 'function') action.onClick(item);
+    },
+    moveSelection(direction) {
+      if (direction === 'ArrowLeft') {
+        this.selectedCell.y = Math.max(this.selectedCell.y - 1, 0)
+      } else if (direction === 'ArrowRight') {
+        this.selectedCell.y = Math.min(this.selectedCell.y + 1, this.columns.length - 1)
+      } else if (direction === 'ArrowUp')  {
+        this.selectedCell.x = Math.max(this.selectedCell.x - 1, 0)
+      } else if (direction === 'ArrowDown') { // bottom
+        this.selectedCell.x = Math.min(this.selectedCell.x + 1, this.items.length - 1)
+      }
+      this.$nextTick(() => {
+        console.log(this.$refs);
+        this.$refs.selectedCell[0].scrollIntoView()
+        // this.$refs.selectedCell.scrollIntoView();
+      });
+    }
+  },
+  // watch: { 
+  //   items: function(newVal, oldVal) { // watch it
+  //     // go through each column, figure out
+  //   }
+  // },
+  mounted() {
+    let thElm;
+    let startOffset;
+
+    Array.prototype.forEach.call(
+    document.querySelectorAll("table th div"),
+    function (th) {
+        th.style.position = 'relative';
+
+        let grip = document.createElement('div');
+        grip.innerHTML = "&nbsp;";
+        grip.style.top = 0;
+        grip.style.right = 0;
+        grip.style.bottom = 0;
+        grip.style.width = '5px';
+        grip.style.position = 'absolute';
+        grip.style.cursor = 'col-resize';
+        grip.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            thElm = th;
+            startOffset = th.offsetWidth - e.pageX;
+        });
+
+        grip.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        })
+
+        th.appendChild(grip);
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (thElm) {
+            thElm.style.width = startOffset + e.pageX + 'px';
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      this.moveSelection(e.key);
+    });
+
+    document.addEventListener('mouseup', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      thElm = undefined;
+    });
+    if (this.items) {
+      this.selections = this.items.map(item => false);
+    }
+  },
+  unmounted() {
+
+  }
+}
+</script>
+<style lang="scss">
+* {
+  box-sizing: border-box !important;
+}
+.position-relative {
+  position: relative !important;
+}
+.position-absolute {
+  position: absolute !important;
+}
+.r-data-grid {
+  height: 200px;
+  overflow-y: auto;
+  table {
+    background: #fff;
+    border: 2px solid #f2f2f2;
+  }
+  th {
+    text-align: left;
+    background: #f2f2f2;
+  }
+  th, td {
+    padding: 0 10px;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .r-resize-block {
+    border-right: 2px solid #232323;
+    height: 30px;
+    display: inline-block;
+    right: 0;
+    margin-left: 10px;
+  }
+  .selected-cell {
+    border: 2px solid blue;
+  }
+}
+</style>
