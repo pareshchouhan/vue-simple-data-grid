@@ -10,7 +10,7 @@
           </th>
           <th class="position-relative" v-for="column of columns" :key="column.key" @click.prevent="sortColumn(column)">
             {{column.name}} <span class="ml-auto" v-if="sorting.key && sorting.key === column.key"><v-icon>{{sorting.order === 'ASC' ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon></span>
-            <div class="r-resize-block"></div>
+<!--            <div class="r-resize-block"></div>-->
           </th>
         </tr>
       </thead>
@@ -25,7 +25,7 @@
               {{item[column.key]}}
             </template>
             <template v-if="typeof item[column.key] === 'object'">
-              <slot :name="'item.' + column.key" v-bind:item="item" v-bind:column="column">
+              <slot class='slot' :name="'item.' + column.key" v-bind:item="item" v-bind:column="column">
               </slot>
             </template>
             <template v-if="column.key === 'actions'">
@@ -118,7 +118,7 @@ export default {
       });
     }
   },
-  // watch: { 
+  // watch: {
   //   items: function(newVal, oldVal) { // watch it
   //     // go through each column, figure out
   //   }
@@ -189,19 +189,35 @@ export default {
 .position-absolute {
   position: absolute !important;
 }
+
 .r-data-grid {
-  height: 200px;
   overflow-y: auto;
   table {
     background: #fff;
     border: 2px solid #f2f2f2;
+    border-collapse: collapse;
+    width: 100%;
   }
   th {
     text-align: left;
     background: #f2f2f2;
+    font-size: 16px;
+    color: #999;
+    padding: 10px 0;
+    height: 40px;
   }
+
   th, td {
-    padding: 0 10px;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 15px;
+  }
+  td {
+    color: #666;
+  }
+  th {
+    padding: 0px 0px;
   }
   tr:nth-child(even) {
     background-color: #f2f2f2;
@@ -215,6 +231,18 @@ export default {
   }
   .selected-cell {
     border: 2px solid blue;
+  }
+  .slot {
+    background: #5fcbb1;
+  }
+
+}
+.v-btn--fab.v-size--default {
+  width: 37px;
+  height: 37px;
+  i {
+    font-size: 20px !important;
+    color: #666 !important;
   }
 }
 </style>

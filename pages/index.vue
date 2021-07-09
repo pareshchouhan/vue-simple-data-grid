@@ -1,8 +1,11 @@
 <template>
   <div>
+    <div class='text-div'>
+      <span class='big-text'>Users</span> <span class='selected-count'>3 selected</span> out of 6
+    </div>
     <app-data-grid :columns="columns" :items="items">
       <template slot="item.roles" slot-scope="{ item, column }">
-        <v-chip v-for="(entry, index) of item[column.key]" :key="entry.key + '-' + index" :color="entry.color" dark class="mx-2">{{entry.key}}</v-chip>
+        <span :style="{color: entry.textColor, background: entry.bgColor}" v-for="(entry, index) of item[column.key]" :key="entry.key + '-' + index"  class="mx-2 chips">{{entry.key}}</span>
       </template>
     </app-data-grid>
   </div>
@@ -56,37 +59,40 @@ export default {
         id: 1,
         username: 'paresh',
         emailId: 'paresh@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }, { key: 'wow', color: 'green' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7', }, { key: 'wow', bgColor: 'rgba(95, 203, 177, .2)', textColor: '#5fcbb1', }]
       }, {
         id: 2,
         username: 'rahul',
         emailId: 'rahul@gmail.com',
-        roles: [ { key: 'wow', color: 'green' }, { key: 'admin', color: 'red' }]
+        roles: [ { key: 'wow', bgColor: 'rgba(95, 203, 177, .2)', textColor: '#5fcbb1' }, { key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }, { key: 'viewer', bgColor: 'rgba(50, 110, 236,0.21)', textColor: '#326eec' }]
       }, {
         id: 3,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }]
       }, {
         id: 4,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }]
       }, {
         id: 5,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }]
+
       }, {
         id: 6,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }]
+
       }, {
         id: 7,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', bgColor: 'rgba(146,103,247,0.21)', textColor: '#9267f7' }]
+
       }]
     };
   },
@@ -95,3 +101,20 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.big-text {
+  font-size: 24px;
+  margin-right: 10px;
+}
+.selected-count {
+  text-decoration: underline;
+}
+.text-div {
+  margin-bottom: 10px;
+}
+.chips {
+  border-radius: 4px;
+  font-weight: 500;
+  padding: 0 10px;
+}
+</style>
