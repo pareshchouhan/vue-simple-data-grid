@@ -8,9 +8,8 @@
 
             </v-simple-checkbox>
           </th>
-          <th class="position-relative" v-for="column of columns" :key="column.key" @click.prevent="sortColumn(column)">
+          <th v-for="column of columns" :key="column.key" @click.prevent.stop="sortColumn(column)">
             {{column.name}} <span class="ml-auto" v-if="sorting.key && sorting.key === column.key"><v-icon>{{sorting.order === 'ASC' ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon></span>
-            <div class="r-resize-block"></div>
           </th>
         </tr>
       </thead>
@@ -25,7 +24,7 @@
               {{item[column.key]}}
             </template>
             <template v-if="typeof item[column.key] === 'object'">
-              <slot :name="'item.' + column.key" v-bind:item="item" v-bind:column="column">
+              <slot class='slot' :name="'item.' + column.key" v-bind:item="item" v-bind:column="column">
               </slot>
             </template>
             <template v-if="column.key === 'actions'">
@@ -112,67 +111,24 @@ export default {
         this.selectedCell.x = Math.min(this.selectedCell.x + 1, this.items.length - 1)
       }
       this.$nextTick(() => {
-        if (this.$refs.selectedCell && this.$refs.selectedCell[0]) {
-          this.$refs.selectedCell[0].scrollIntoView(false, {
+        console.log(this.$refs);
+        this.$refs.selectedCell[0].scrollIntoView(false, {
             behavior: 'smooth',
             block: 'center',
             inline: 'center'
           })
-        }
+        // this.$refs.selectedCell.scrollIntoView();
       });
     }
   },
-  // watch: { 
+  // watch: {
   //   items: function(newVal, oldVal) { // watch it
   //     // go through each column, figure out
   //   }
   // },
   mounted() {
-    let thElm;
-    let startOffset;
-
-    Array.prototype.forEach.call(
-    document.querySelectorAll("table th div"),
-    function (th) {
-        th.style.position = 'relative';
-
-        let grip = document.createElement('div');
-        grip.innerHTML = "&nbsp;";
-        grip.style.top = 0;
-        grip.style.right = 0;
-        grip.style.bottom = 0;
-        grip.style.width = '5px';
-        grip.style.position = 'absolute';
-        grip.style.cursor = 'col-resize';
-        grip.addEventListener('mousedown', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            thElm = th;
-            startOffset = th.offsetWidth - e.pageX;
-        });
-
-        grip.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        })
-
-        th.appendChild(grip);
-    });
-
-    document.addEventListener('mousemove', function (e) {
-        if (thElm) {
-            thElm.style.width = startOffset + e.pageX + 'px';
-        }
-    });
-
     document.addEventListener('keydown', (e) => {
       this.moveSelection(e.key);
-    });
-
-    document.addEventListener('mouseup', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      thElm = undefined;
     });
     if (this.items) {
       this.selections = this.items.map(item => false);
@@ -193,32 +149,66 @@ export default {
 .position-absolute {
   position: absolute !important;
 }
+
 .r-data-grid {
-  height: 200px;
   overflow-y: auto;
   table {
     background: #fff;
     border: 2px solid #f2f2f2;
+    border-collapse: collapse;
+    width: 100%;
   }
   th {
     text-align: left;
     background: #f2f2f2;
+    font-size: 16px;
+    color: #999;
+    padding: 10px 0;
+    height: 40px;
+    position: sticky;
+    top: 0;  /* REQUIRED: https://stackoverflow.com/a/43707215 */
+    z-index: 10;
+    resize: horizontal;
+    overflow: auto;
+    padding: 8px;
   }
+
   th, td {
-    padding: 0 10px;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    // text-align: center;
+    font-size: 15px;
+  }
+  td {
+    color: #666;
+  }
+  th {
+    // padding: 0px 0px;
   }
   tr:nth-child(even) {
-    background-color: #f2f2f2;
+    // background-color: #f2f2f2;
   }
   .r-resize-block {
-    border-right: 2px solid #232323;
+    // border-right: 2px solid #232323;
     height: 30px;
     display: inline-block;
-    right: 0;
-    margin-left: 10px;
+    // right: 0;
+    // margin-left: 10px;
   }
   .selected-cell {
     border: 2px solid blue;
+  }
+  .slot {
+    background: #5fcbb1;
+  }
+
+}
+.v-btn--fab.v-size--default {
+  width: 37px;
+  height: 37px;
+  i {
+    font-size: 20px !important;
+    color: #666 !important;
   }
 }
 </style>
