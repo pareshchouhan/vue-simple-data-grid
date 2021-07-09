@@ -12,3 +12,15 @@
 export default {
 }
 </script>
+
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+$font-family: 'Lato';
+.v-application {
+  [class*='text-'] {
+    color: #36405a;
+    font-family: $font-family, sans-serif !important;
+  }
+  font-family: $font-family, sans-serif !important;
+}
+</style>
