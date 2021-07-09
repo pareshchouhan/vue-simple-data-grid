@@ -1,5 +1,8 @@
 <template>
   <div class="r-data-grid">
+    <div class='text-div'>
+      <span class='big-text'>Users</span> <span class='selected-count'>{{selectedItemsCount}} selected</span> out of {{this.items.length}}
+    </div>
     <table class="r-data-grid-table">
       <thead>
         <tr>
@@ -69,6 +72,9 @@ export default {
     //   }
     //   return updatedItems;
     // }
+    selectedItemsCount() {
+      return this.selections.reduce((totalSelected, current) => current ? totalSelected + 1 : totalSelected, 0);
+    }
   },
   methods: {
     sortColumn(column) {

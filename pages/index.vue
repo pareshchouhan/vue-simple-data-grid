@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class='text-div'>
-      <span class='big-text'>Users</span> <span class='selected-count'>3 selected</span> out of 6
-    </div>
     <app-data-grid :columns="columns" :items="items">
       <template slot="item.roles" slot-scope="{ item, column }">
         <span :style="{color: entry.textColor, background: entry.bgColor}" v-for="(entry, index) of item[column.key]" :key="entry.key + '-' + index"  class="mx-2 chips">{{entry.key}}</span>
