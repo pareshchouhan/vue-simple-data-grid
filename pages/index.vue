@@ -56,37 +56,37 @@ export default {
         id: 1,
         username: 'paresh',
         emailId: 'paresh@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }, { key: 'wow', color: 'green' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }, { key: 'wow', color: 'green' }]
       }, {
         id: 2,
         username: 'rahul',
         emailId: 'rahul@gmail.com',
-        roles: [ { key: 'wow', color: 'green' }, { key: 'admin', color: 'red' }]
+        roles: [ { key: 'wow', color: 'green' }, { key: 'admin', color: 'red darken-1' }]
       }, {
         id: 3,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }]
       }, {
         id: 4,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }]
       }, {
         id: 5,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }]
       }, {
         id: 6,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }]
       }, {
         id: 7,
         username: 'aish',
         emailId: 'aish@gmail.com',
-        roles: [{ key: 'admin', color: 'red' }]
+        roles: [{ key: 'admin', color: 'red darken-1' }]
       }]
     };
   },

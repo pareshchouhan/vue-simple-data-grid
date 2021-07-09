@@ -112,9 +112,13 @@ export default {
         this.selectedCell.x = Math.min(this.selectedCell.x + 1, this.items.length - 1)
       }
       this.$nextTick(() => {
-        console.log(this.$refs);
-        this.$refs.selectedCell[0].scrollIntoView()
-        // this.$refs.selectedCell.scrollIntoView();
+        if (this.$refs.selectedCell && this.$refs.selectedCell[0]) {
+          this.$refs.selectedCell[0].scrollIntoView(false, {
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+          })
+        }
       });
     }
   },
